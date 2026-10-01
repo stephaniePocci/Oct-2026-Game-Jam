@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://twga4o4vc7ar"]
+
+[node name="Game" type="Node2D" unique_id=1019142596]
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1642058387]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Board" type="Node2D" parent="." unique_id=774827638]

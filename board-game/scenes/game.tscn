@@ -1,9 +1,10 @@
 [gd_scene format=3 uid="uid://twga4o4vc7ar"]
 
+[ext_resource type="PackedScene" uid="uid://d1fdwcqib82wo" path="res://scenes/Room.tscn" id="1_uwrxv"]
+
 [node name="Game" type="Node2D" unique_id=1019142596]
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=1642058387]
-offset_right = 40.0
-offset_bottom = 40.0
-
 [node name="Board" type="Node2D" parent="." unique_id=774827638]
+
+[node name="Room" parent="Board" unique_id=1519677944 instance=ExtResource("1_uwrxv")]
+position = Vector2(576, 324)

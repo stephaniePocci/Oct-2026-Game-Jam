@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://d1fdwcqib82wo"]
+
+[ext_resource type="Script" uid="uid://bya4kov2r8nqu" path="res://scripts/room.gd" id="1_llheb"]
+
+[node name="Room" type="Node2D" unique_id=1519677944]
+script = ExtResource("1_llheb")
+north_exit = true
+
+[node name="Polygon2D" type="Polygon2D" parent="." unique_id=1637156676]

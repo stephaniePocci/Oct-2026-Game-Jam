@@ -10,6 +10,4 @@ script = ExtResource("2_board")
 
 [node name="Room" parent="Board" unique_id=1519677944 instance=ExtResource("1_uwrxv")]
 position = Vector2(576, 324)
-east_exit = true
-south_exit = true
-west_exit = true
+north_exit = false

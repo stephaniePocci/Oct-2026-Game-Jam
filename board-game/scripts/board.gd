@@ -17,7 +17,31 @@ func check_room_exits(room):
 	if room.north_exit:
 		spawn_north_room(room)
 		
+	if room.south_exit:
+		spawn_south_room(room)
+		
+	if room.east_exit:
+		spawn_east_room(room)
+		
+	if room.west_exit:
+		spawn_west_room(room)
+		
 func spawn_north_room(room):
 		spawn_room(
 		room.position + Vector2(0, -ROOM_SIZE.y)
 	)
+
+func spawn_south_room(room):
+		spawn_room(
+			room.position + Vector2(0, ROOM_SIZE.y)
+		)
+		
+func spawn_east_room(room):
+		spawn_room(
+			room.position + Vector2(ROOM_SIZE.x, 0)
+		)
+
+func spawn_west_room(room):
+		spawn_room(
+			room.position + Vector2(-ROOM_SIZE.x, 0)
+		)

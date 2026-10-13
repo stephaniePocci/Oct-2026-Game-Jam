@@ -8,6 +8,7 @@ const ROOM_SIZE := Vector2(256, 192)
 @export var west_exit: bool = false
 
 signal side_clicked(room, direction: String)
+signal room_clicked(room)
 const CIRCLE_RADIUS := 12.0
 const SIDE_POSITIONS := {
 	"north": Vector2(0,-80),
@@ -55,3 +56,7 @@ func _unhandled_input(event: InputEvent):
 			get_viewport().set_input_as_handled()
 			side_clicked.emit(self, direction)
 			return
+			
+	if Rect2(-ROOM_SIZE / 2, ROOM_SIZE).has_point(mouse_position):
+		get_viewport().set_input_as_handled()
+		room_clicked.emit(self)

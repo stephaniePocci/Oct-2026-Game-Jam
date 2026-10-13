@@ -10,7 +10,7 @@ func _draw() -> void:
 	draw_circle(Vector2.ZERO, TOKEN_RADIUS, Color.CRIMSON)
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if not event is InputEventMouseButton:
 		return
 	if event.button_index != MOUSE_BUTTON_LEFT or not event.pressed:

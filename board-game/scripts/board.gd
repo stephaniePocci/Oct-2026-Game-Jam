@@ -24,7 +24,13 @@ func _on_room_clicked(room):
 		return
 	if move_tween and move_tween.is_running():
 		return
-	if token.position == room.position:
+	var offset: Vector2 = room.position - token.position
+	if not (offset in [
+		Vector2(0, -ROOM_SIZE.y),
+		Vector2(ROOM_SIZE.x, 0),
+		Vector2(0, ROOM_SIZE.y),
+		Vector2(-ROOM_SIZE.x, 0)
+	]):
 		return
 		
 	move_tween = create_tween()

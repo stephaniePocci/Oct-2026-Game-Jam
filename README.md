@@ -10,8 +10,13 @@ The game is built with Godot 4.7.
 2. Open `board-game/scenes/game.tscn`.
 3. Press **F6** to run the current scene or **F5** to run the project.
 
-The project currently contains an early board-game scaffold. `game.tscn` is the
-main scene and contains a `Board` with one reusable `Room` instance. Rooms draw
-a 256 x 192 background and border and expose north, east, south, and west exit
-settings in the Godot inspector; the first room starts with its north exit
-enabled.
+The project currently contains an early board-game prototype. `game.tscn` is
+the main scene, with a `Board`, one 256 x 192 starting room, and a crimson
+character token. Rooms expose north, east, south, and west exit settings in the
+Godot inspector; no exits are enabled in the starting scene.
+
+Click a gold marker on a room's edge to spawn a room on that side. Click the
+crimson token to select it (a gold outline appears), then click an existing
+room directly north, east, south, or west to glide there. Diagonal and more
+distant rooms cannot be reached in one move. Click the token again to deselect
+it.

@@ -31,6 +31,20 @@ existing room directly north, east, south, or west to glide there. Diagonal and
 more distant rooms cannot be reached in one move. Click the token again to
 deselect it.
 
+## Room items
+
+Each room has up to four item spots, filled in this order: upper right, lower
+right, upper left, lower left. A room can spawn at most one item when it first
+appears. Items are green cards; collecting and dropping them are not available
+yet.
+
+To add an item type, create a new `ItemDefinition` resource in Godot's FileSystem
+dock, set its name and spawn chance, then add it to the Board node's
+`Item Definitions` array in `game.tscn`. The included Starter Item has a 50%
+chance. Chances across the array must total at most 100%; the unused percentage
+is the chance that a room starts empty. Names are stored with the items but are
+not drawn on the cards yet.
+
 ## Project structure
 
 ```text

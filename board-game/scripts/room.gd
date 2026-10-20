@@ -47,7 +47,7 @@ func has_entrance(direction: String) -> bool:
 		"west": return west_exit
 	return false
 
-func is_connected(direction: String) -> bool:
+func has_room_connection(direction: String) -> bool:
 	return connected_rooms.has(direction)
 
 func connect_room(direction: String, room: Node2D) -> void:
@@ -76,20 +76,14 @@ func _draw() -> void:
 		draw_rect(card_rect, Color(0.2, 0.78, 0.32), true)
 		draw_rect(card_rect, Color(0.08, 0.35, 0.12), false, 2.0)
 
-func _unhandled_input(event: InputEvent) -> void:
-	if not event is InputEventMouseButton:
-		return
-	if event.button_index != MOUSE_BUTTON_LEFT or not event.pressed:
-		return
-	var mouse_position := get_local_mouse_position()
+func handle_click(screen_position: Vector2) -> void:
+	var mouse_position := get_global_transform_with_canvas().affine_inverse() * screen_position
 	for direction in SIDE_POSITIONS:
 		if not has_entrance(direction):
 			continue
 		if mouse_position.distance_to(SIDE_POSITIONS[direction]) <= CIRCLE_RADIUS:
-			get_viewport().set_input_as_handled()
-			if not is_connected(direction):
+			if not has_room_connection(direction):
 				side_clicked.emit(self, direction)
 			return
 	if Rect2(-ROOM_SIZE / 2, ROOM_SIZE).has_point(mouse_position):
-		get_viewport().set_input_as_handled()
 		room_clicked.emit(self)

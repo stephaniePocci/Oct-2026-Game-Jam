@@ -14,6 +14,10 @@ script = ExtResource("2_board")
 item_definitions = Array[Resource]([ExtResource("4_item")])
 room_definitions = Array[Resource]([ExtResource("5_room_a"), ExtResource("6_room_b")])
 
+[node name="Camera2D" type="Camera2D" parent="Board"]
+zoom = Vector2(1.5, 1.5)
+limit_enabled = false
+
 [node name="Room" parent="Board" unique_id=1519677944 instance=ExtResource("1_uwrxv")]
 position = Vector2(576, 324)
 

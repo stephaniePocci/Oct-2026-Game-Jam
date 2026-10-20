@@ -10,14 +10,10 @@ func _draw() -> void:
 	draw_circle(Vector2.ZERO, TOKEN_RADIUS, Color.CRIMSON)
 
 
-func _input(event: InputEvent) -> void:
-	if not event is InputEventMouseButton:
-		return
-	if event.button_index != MOUSE_BUTTON_LEFT or not event.pressed:
-		return
-	if get_local_mouse_position().length() > TOKEN_RADIUS:
-		return
+func contains_screen_point(screen_position: Vector2) -> bool:
+	var local_position := get_global_transform_with_canvas().affine_inverse() * screen_position
+	return local_position.length() <= TOKEN_RADIUS
 
+func toggle_selected() -> void:
 	selected = not selected
 	queue_redraw()
-	get_viewport().set_input_as_handled()

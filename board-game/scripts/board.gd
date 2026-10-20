@@ -165,7 +165,7 @@ func _roll_entrances(cell: Vector2i, required_direction: String) -> Array[String
 		var neighbor = rooms_by_cell.get(cell + DIRECTIONS[direction])
 		if neighbor == null:
 			optional.append(direction)
-		elif neighbor.has_entrance(OPPOSITE[direction]) and not neighbor.has_connection(OPPOSITE[direction]):
+		elif neighbor.has_entrance(OPPOSITE[direction]) and not neighbor.has_room_connection(OPPOSITE[direction]):
 			entrances.append(direction)
 	optional.shuffle()
 	var target_count := randi_range(maxi(1, entrances.size()), entrances.size() + optional.size())
@@ -179,7 +179,7 @@ func _connect_neighbors(room, cell: Vector2i) -> void:
 			continue
 		var neighbor = rooms_by_cell.get(cell + DIRECTIONS[direction])
 		var opposite: String = OPPOSITE[direction]
-		if neighbor != null and neighbor.has_entrance(opposite) and not neighbor.has_connection(opposite):
+		if neighbor != null and neighbor.has_entrance(opposite) and not neighbor.has_room_connection(opposite):
 			room.connect_room(direction, neighbor)
 			neighbor.connect_room(opposite, room)
 
@@ -211,7 +211,7 @@ func _on_move_finished(room) -> void:
 	current_room = room
 
 func _on_room_side_clicked(room, direction: String) -> void:
-	if not DIRECTIONS.has(direction) or not room.has_entrance(direction) or room.has_connection(direction):
+	if not DIRECTIONS.has(direction) or not room.has_entrance(direction) or room.has_room_connection(direction):
 		return
 	var cell: Vector2i = cells_by_room[room] + DIRECTIONS[direction]
 	if rooms_by_cell.has(cell):

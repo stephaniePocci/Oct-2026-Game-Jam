@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="RoomDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/room_definition.gd" id="1_room"]
+
+[resource]
+script = ExtResource("1_room")
+room_name = "Room B"
+placeholder_color = Color(0.18, 0.25, 0.34, 1)
+spawn_chance = 50

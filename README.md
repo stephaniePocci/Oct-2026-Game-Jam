@@ -32,6 +32,10 @@ connected room directly north, east, south, or west to glide there. Adjacent
 rooms without a connecting entrance, diagonal rooms, and more distant rooms
 cannot be reached in one move. Click the token again to deselect it.
 
+Left-drag anywhere to move the view across the board as rooms appear. A short
+click still selects the token, moves it, or spawns a room. Scroll up to zoom in
+and down to zoom out; zoom stays centered on the point under the mouse.
+
 ## Room types and artwork
 
 The Board node's `Room Definitions` array contains two sample types, Room A and
@@ -80,9 +84,9 @@ board-game/
 ```
 
 Rooms describe themselves and report clicks through the `side_clicked` and
-`room_clicked` signals. The Board tracks occupied spaces and connected
-entrances, and controls spawning, placement, and token movement in response to
-clicks, rather than every frame.
+`room_clicked` signals. The Board distinguishes clicks from drags, tracks
+occupied spaces and connected entrances, and controls spawning, placement,
+token movement, and the camera.
 
 The exit flags are exported in the Room Inspector, but the Board rolls their
 values when play begins and whenever it creates a room. Keep them unchecked in

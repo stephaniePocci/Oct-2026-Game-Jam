@@ -2,6 +2,10 @@ extends Node2D
 
 const ROOM_SCENE = preload("res://scenes/Room.tscn")
 const ROOM_SIZE := Vector2(256, 192)
+const DRAG_THRESHOLD := 8.0
+const ZOOM_STEP := 1.1
+const MIN_ZOOM := 0.5
+const MAX_ZOOM := 3.0
 const DIRECTIONS := {
 	"north": Vector2i.UP,
 	"east": Vector2i.RIGHT,
@@ -18,6 +22,8 @@ const OPPOSITE := {
 @export var item_definitions: Array[ItemDefinition] = []
 @export var room_definitions: Array[RoomDefinition] = []
 
+@onready var camera: Camera2D = $Camera2D
+
 var token
 var current_room
 var move_tween: Tween
@@ -26,18 +32,75 @@ var room_chances_valid := true
 var rooms_by_cell: Dictionary = {}
 var cells_by_room: Dictionary = {}
 var board_origin: Vector2
+var mouse_down := false
+var dragging := false
+var press_position := Vector2.ZERO
 
 func _ready() -> void:
 	var starting_room = get_node("Room")
 	token = get_node("CharacterToken")
 	current_room = starting_room
 	board_origin = starting_room.position
+	camera.position = board_origin
 	item_chances_valid = _validate_item_chances()
 	room_chances_valid = _validate_room_chances()
 	starting_room.set_definition(_choose_room_definition())
 	starting_room.set_entrances(_roll_entrances(Vector2i.ZERO, ""))
 	_register_room(starting_room, Vector2i.ZERO)
 	_spawn_item(starting_room)
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			if event.pressed:
+				_zoom_at(event.position, event.button_index == MOUSE_BUTTON_WHEEL_UP)
+				get_viewport().set_input_as_handled()
+			return
+		if event.button_index != MOUSE_BUTTON_LEFT:
+			return
+		if event.pressed:
+			mouse_down = true
+			dragging = false
+			press_position = event.position
+		else:
+			if mouse_down and not dragging:
+				_click_at(event.position)
+			mouse_down = false
+			dragging = false
+		get_viewport().set_input_as_handled()
+	elif event is InputEventMouseMotion and mouse_down:
+		if (event.button_mask & MOUSE_BUTTON_MASK_LEFT) == 0:
+			mouse_down = false
+			dragging = false
+			return
+		if not dragging and event.position.distance_to(press_position) >= DRAG_THRESHOLD:
+			dragging = true
+		if dragging:
+			camera.position -= event.relative / camera.zoom.x
+			get_viewport().set_input_as_handled()
+
+func _zoom_at(screen_position: Vector2, zoom_in: bool) -> void:
+	var old_zoom := camera.zoom.x
+	var new_zoom := clampf(old_zoom * (ZOOM_STEP if zoom_in else 1.0 / ZOOM_STEP), MIN_ZOOM, MAX_ZOOM)
+	if is_equal_approx(old_zoom, new_zoom):
+		return
+	var before := get_global_transform_with_canvas().affine_inverse() * screen_position
+	camera.zoom = Vector2.ONE * new_zoom
+	camera.force_update_scroll()
+	var after := get_global_transform_with_canvas().affine_inverse() * screen_position
+	camera.position += before - after
+	camera.force_update_scroll()
+
+func _click_at(screen_position: Vector2) -> void:
+	if token.contains_screen_point(screen_position):
+		token.toggle_selected()
+		return
+	var board_position := get_global_transform_with_canvas().affine_inverse() * screen_position
+	var offset := board_position - board_origin + ROOM_SIZE / 2.0
+	var cell := Vector2i(floori(offset.x / ROOM_SIZE.x), floori(offset.y / ROOM_SIZE.y))
+	var room = rooms_by_cell.get(cell)
+	if room != null:
+		room.handle_click(screen_position)
 
 func _register_room(room, cell: Vector2i) -> void:
 	rooms_by_cell[cell] = room

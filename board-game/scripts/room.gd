@@ -47,7 +47,7 @@ func has_entrance(direction: String) -> bool:
 		"west": return west_exit
 	return false
 
-func is_connected(direction: String) -> bool:
+func has_room_connection(direction: String) -> bool:
 	return connected_rooms.has(direction)
 
 func connect_room(direction: String, room: Node2D) -> void:
@@ -87,7 +87,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			continue
 		if mouse_position.distance_to(SIDE_POSITIONS[direction]) <= CIRCLE_RADIUS:
 			get_viewport().set_input_as_handled()
-			if not is_connected(direction):
+			if not has_room_connection(direction):
 				side_clicked.emit(self, direction)
 			return
 	if Rect2(-ROOM_SIZE / 2, ROOM_SIZE).has_point(mouse_position):

@@ -17,19 +17,36 @@ and the Compatibility renderer.
 
 ## Try the prototype
 
-The game starts with one room and a crimson character token. Left-click a gold
-circle on the room's north, east, south, or west side to spawn a neighboring
-room in that direction. New rooms have the same clickable circles, so you can
-continue expanding the board.
+The game starts with one room and a crimson character token. Each room has a
+random 1-4 entrances, marked by gold circles at its north, east, south, or
+west sides. Left-click an unconnected entrance to spawn a neighboring room.
+The new room always has a facing entrance, and matching entrances on any other
+adjacent rooms connect automatically. Rooms never spawn over occupied spaces.
 
-Each room draws a 256 x 192 background and border. Clicking a side sets that
-room's corresponding exit flag to `true`; further clicks on that same side are
-ignored. Rooms start with all four exit flags set to `false`.
+Each room draws a 256 x 192 background and border. Its directional exit flags
+now represent entrances; connected entrances stay visible but cannot spawn
+another room.
 
 Click the crimson token to select it; a gold outline appears. Then click an
-existing room directly north, east, south, or west to glide there. Diagonal and
-more distant rooms cannot be reached in one move. Click the token again to
-deselect it.
+connected room directly north, east, south, or west to glide there. Adjacent
+rooms without a connecting entrance, diagonal rooms, and more distant rooms
+cannot be reached in one move. Click the token again to deselect it.
+
+## Room types and artwork
+
+The Board node's `Room Definitions` array contains two sample types, Room A and
+Room B, each with a 50% chance and a different placeholder color. To add a type,
+create a `RoomDefinition` resource in Godot, give it a name and spawn chance,
+then add it to the array. Import your image into the Godot project and assign
+it to that resource's `Room Art` field. Artwork fills the room's 256 x 192 area;
+use a 4:3 image to avoid stretching. Entrances, borders, and items draw above
+the artwork.
+
+Room type chances must total at most 100%. Any unused percentage gives a plain
+room, and an empty definitions array produces only plain rooms. The starting
+room follows the same selection rules as newly spawned rooms. Entrance count
+and placement are rolled separately from room type, while the entrance facing
+the clicked room is always included.
 
 ## Room items
 
@@ -49,28 +66,29 @@ not drawn on the cards yet.
 
 ```text
 board-game/
+├── rooms/               # Room type resources and spawn chances
 ├── scenes/
 │   ├── game.tscn       # Main scene with Board, Room, and CharacterToken
 │   └── Room.tscn       # Reusable room scene
 ├── scripts/
 │   ├── board.gd        # Places rooms and moves the token
 │   ├── room.gd         # Draws rooms and detects clicks
+│   ├── room_definition.gd # Artwork and room type settings
 │   └── character_token.gd # Draws and selects the token
 ├── project.godot
 └── icon.svg
 ```
 
 Rooms describe themselves and report clicks through the `side_clicked` and
-`room_clicked` signals. The Board controls spawning, placement, and token
-movement in response to clicks, rather than every frame.
+`room_clicked` signals. The Board tracks occupied spaces and connected
+entrances, and controls spawning, placement, and token movement in response to
+clicks, rather than every frame.
 
-The exit flags are exported in the Room Inspector. Keep them unchecked in the
-reusable `Room.tscn` scene so newly spawned rooms can explore every direction.
-A checked flag means that side is already explored in this prototype.
+The exit flags are exported in the Room Inspector, but the Board rolls their
+values when play begins and whenever it creates a room. Keep them unchecked in
+the reusable `Room.tscn` scene.
 
 ## Current limitations
 
-- Occupied positions are not tracked yet. Exploring back toward an existing
-  room or around a loop can spawn overlapping rooms.
-- The circles are temporary visuals and remain visible after a side is explored.
+- The circles are temporary entrance visuals; artwork can be assigned later.
 - The prototype has no multiple floors or fall/stair transitions yet.

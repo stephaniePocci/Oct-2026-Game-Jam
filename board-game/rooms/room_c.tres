@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="RoomDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/room_definition.gd" id="1_room"]
+[ext_resource type="Texture2D" path="res://assets/rooms/ascending staircase.png" id="2_art"]
+
+[resource]
+script = ExtResource("1_room")
+room_name = "Ascending Staircase"
+room_art = ExtResource("2_art")
+placeholder_color = Color(0.25, 0.23, 0.22, 1)
+spawn_chance = 33

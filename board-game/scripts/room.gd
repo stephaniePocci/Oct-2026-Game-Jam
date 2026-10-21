@@ -40,6 +40,14 @@ func set_entrances(directions: Array[String]) -> void:
 	west_exit = directions.has("west")
 	queue_redraw()
 
+func add_entrance(direction: String) -> void:
+	match direction:
+		"north": north_exit = true
+		"east": east_exit = true
+		"south": south_exit = true
+		"west": west_exit = true
+	queue_redraw()
+
 func has_entrance(direction: String) -> bool:
 	match direction:
 		"north": return north_exit

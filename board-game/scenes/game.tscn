@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://twga4o4vc7ar"]
+[gd_scene load_steps=16 format=3 uid="uid://twga4o4vc7ar"]
 
 [ext_resource type="PackedScene" uid="uid://d1fdwcqib82wo" path="res://scenes/Room.tscn" id="1_uwrxv"]
 [ext_resource type="Script" uid="uid://ffx0qctbn0pp" path="res://scripts/board.gd" id="2_board"]
@@ -6,6 +6,7 @@
 [ext_resource type="Resource" path="res://items/starter_item.tres" id="4_item"]
 [ext_resource type="Resource" path="res://rooms/room_a.tres" id="5_room_a"]
 [ext_resource type="Resource" path="res://rooms/room_b.tres" id="6_room_b"]
+[ext_resource type="Resource" path="res://rooms/room_c.tres" id="10_room_c"]
 [ext_resource type="Texture2D" path="res://assets/references/Haunted Gothic Game Mood Board.png" id="7_mood"]
 [ext_resource type="Shader" path="res://shaders/circle_mask.gdshader" id="8_circle"]
 [ext_resource type="Script" path="res://scripts/character_hud.gd" id="9_hud"]
@@ -40,7 +41,7 @@ bg_color = Color(0.55, 0.15, 0.14, 1)
 [node name="Board" type="Node2D" parent="." unique_id=774827638]
 script = ExtResource("2_board")
 item_definitions = Array[Resource]([ExtResource("4_item")])
-room_definitions = Array[Resource]([ExtResource("5_room_a"), ExtResource("6_room_b")])
+room_definitions = Array[Resource]([ExtResource("5_room_a"), ExtResource("6_room_b"), ExtResource("10_room_c")])
 
 [node name="Camera2D" type="Camera2D" parent="Board"]
 zoom = Vector2(1.5, 1.5)

@@ -23,6 +23,7 @@ const SIDE_POSITIONS := {
 
 signal side_clicked(room, direction: String)
 signal room_clicked(room)
+signal item_clicked(room, index: int)
 
 var definition: RoomDefinition
 var connected_rooms: Dictionary = {}
@@ -61,6 +62,14 @@ func add_item(item: ItemDefinition) -> bool:
 	queue_redraw()
 	return true
 
+func take_item(index: int) -> ItemDefinition:
+	if index < 0 or index >= items.size():
+		return null
+	var item: ItemDefinition = items[index]
+	items.remove_at(index)
+	queue_redraw()
+	return item
+
 func _draw() -> void:
 	var room_rect := Rect2(-ROOM_SIZE / 2, ROOM_SIZE)
 	var fill := definition.placeholder_color if definition != null else Color(0.25, 0.23, 0.22)
@@ -74,10 +83,17 @@ func _draw() -> void:
 	for index in items.size():
 		var card_rect := Rect2(ITEM_POSITIONS[index] - ITEM_SIZE / 2, ITEM_SIZE)
 		draw_rect(card_rect, Color(0.2, 0.78, 0.32), true)
+		if items[index].item_art != null:
+			draw_texture_rect(items[index].item_art, card_rect.grow(-3.0), false)
 		draw_rect(card_rect, Color(0.08, 0.35, 0.12), false, 2.0)
 
 func handle_click(screen_position: Vector2) -> void:
 	var mouse_position := get_global_transform_with_canvas().affine_inverse() * screen_position
+	for index in range(items.size() - 1, -1, -1):
+		var card_rect := Rect2(ITEM_POSITIONS[index] - ITEM_SIZE / 2, ITEM_SIZE)
+		if card_rect.has_point(mouse_position):
+			item_clicked.emit(self, index)
+			return
 	for direction in SIDE_POSITIONS:
 		if not has_entrance(direction):
 			continue

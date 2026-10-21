@@ -23,12 +23,14 @@ const OPPOSITE := {
 @export var room_definitions: Array[RoomDefinition] = []
 
 @onready var camera: Camera2D = $Camera2D
+@onready var hud = $"../HUD"
 
 var token
 var current_room
 var move_tween: Tween
 var item_chances_valid := true
 var room_chances_valid := true
+var inventory: Array[ItemDefinition] = []
 var rooms_by_cell: Dictionary = {}
 var cells_by_room: Dictionary = {}
 var board_origin: Vector2
@@ -49,7 +51,7 @@ func _ready() -> void:
 	_register_room(starting_room, Vector2i.ZERO)
 	_spawn_item(starting_room)
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			if event.pressed:
@@ -107,6 +109,15 @@ func _register_room(room, cell: Vector2i) -> void:
 	cells_by_room[room] = cell
 	room.side_clicked.connect(_on_room_side_clicked)
 	room.room_clicked.connect(_on_room_clicked)
+	room.item_clicked.connect(_on_item_clicked)
+
+func _on_item_clicked(room, index: int) -> void:
+	if room != current_room or (move_tween and move_tween.is_running()):
+		return
+	var item: ItemDefinition = room.take_item(index)
+	if item != null:
+		inventory.append(item)
+		hud.add_item(item)
 
 func _validate_item_chances() -> bool:
 	var total := 0
@@ -211,6 +222,8 @@ func _on_move_finished(room) -> void:
 	current_room = room
 
 func _on_room_side_clicked(room, direction: String) -> void:
+	if room != current_room or (move_tween and move_tween.is_running()):
+		return
 	if not DIRECTIONS.has(direction) or not room.has_entrance(direction) or room.has_room_connection(direction):
 		return
 	var cell: Vector2i = cells_by_room[room] + DIRECTIONS[direction]

@@ -17,9 +17,11 @@ and the Compatibility renderer.
 
 ## Try the prototype
 
-The game starts with one room and a crimson character token. Each room has a
+The game starts with one room and a circular character portrait token. Each room has a
 random 1-4 entrances, marked by gold circles at its north, east, south, or
-west sides. Left-click an unconnected entrance to spawn a neighboring room.
+west sides. Left-click an unconnected entrance in the character's current room
+to spawn a neighboring room. Wait for the character to finish moving before
+opening another entrance.
 The new room always has a facing entrance, and matching entrances on any other
 adjacent rooms connect automatically. Rooms never spawn over occupied spaces.
 
@@ -27,7 +29,7 @@ Each room draws a 256 x 192 background and border. Its directional exit flags
 now represent entrances; connected entrances stay visible but cannot spawn
 another room.
 
-Click the crimson token to select it; a gold outline appears. Then click an
+Click the character token to select it; a gold outline appears. Then click a
 connected room directly north, east, south, or west to glide there. Adjacent
 rooms without a connecting entrance, diagonal rooms, and more distant rooms
 cannot be reached in one move. Click the token again to deselect it.
@@ -56,15 +58,21 @@ the clicked room is always included.
 
 Each room has up to four item spots, filled in this order: upper right, lower
 right, upper left, lower left. A room can spawn at most one item when it first
-appears. Items are green cards; collecting and dropping them are not available
-yet.
+appears. Items are green cards. Move the character into a room, then click an
+item to collect it. The item disappears from the room and appears in the
+bottom-left inventory. Collecting does not deselect the character token.
 
 To add an item type, create a new `ItemDefinition` resource in Godot's FileSystem
-dock, set its name and spawn chance, then add it to the Board node's
-`Item Definitions` array in `game.tscn`. The included Starter Item has a 50%
+dock, set its name, spawn chance, and optional item art, then add it to the Board
+node's `Item Definitions` array in `game.tscn`. The included Brass Key has a 50%
 chance. Chances across the array must total at most 100%; the unused percentage
-is the chance that a room starts empty. Names are stored with the items but are
-not drawn on the cards yet.
+is the chance that a room starts empty. Items remain in inventory for the
+current play session; dropping and saving are not available yet.
+
+The character portrait and Brass Key art are cropped at display time from the
+unchanged mood board in `board-game/assets/references`. The circular mask only
+softens the portrait's edge; the reference art itself is unchanged. The Health
+bar in the bottom-left Character view is visual only for now.
 
 ## Project structure
 

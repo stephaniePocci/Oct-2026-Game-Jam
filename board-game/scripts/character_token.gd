@@ -7,7 +7,7 @@ var selected := false
 func _draw() -> void:
 	if selected:
 		draw_circle(Vector2.ZERO, TOKEN_RADIUS + 5.0, Color.GOLD)
-	draw_circle(Vector2.ZERO, TOKEN_RADIUS, Color.CRIMSON)
+	draw_circle(Vector2.ZERO, TOKEN_RADIUS + 1.0, Color(0.16, 0.13, 0.12))
 
 
 func contains_screen_point(screen_position: Vector2) -> bool:

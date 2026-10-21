@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://twga4o4vc7ar"]
+[gd_scene load_steps=15 format=3 uid="uid://twga4o4vc7ar"]
 
 [ext_resource type="PackedScene" uid="uid://d1fdwcqib82wo" path="res://scenes/Room.tscn" id="1_uwrxv"]
 [ext_resource type="Script" uid="uid://ffx0qctbn0pp" path="res://scripts/board.gd" id="2_board"]
@@ -6,6 +6,34 @@
 [ext_resource type="Resource" path="res://items/starter_item.tres" id="4_item"]
 [ext_resource type="Resource" path="res://rooms/room_a.tres" id="5_room_a"]
 [ext_resource type="Resource" path="res://rooms/room_b.tres" id="6_room_b"]
+[ext_resource type="Texture2D" path="res://assets/references/Haunted Gothic Game Mood Board.png" id="7_mood"]
+[ext_resource type="Shader" path="res://shaders/circle_mask.gdshader" id="8_circle"]
+[ext_resource type="Script" path="res://scripts/character_hud.gd" id="9_hud"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_character"]
+atlas = ExtResource("7_mood")
+region = Rect2(1016, 276, 88, 88)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_circle"]
+shader = ExtResource("8_circle")
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_panel"]
+bg_color = Color(0.1, 0.11, 0.1, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.68, 0.55, 0.33, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_health_background"]
+bg_color = Color(0.2, 0.16, 0.16, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_health_fill"]
+bg_color = Color(0.55, 0.15, 0.14, 1)
 
 [node name="Game" type="Node2D" unique_id=1019142596]
 
@@ -25,3 +53,84 @@ position = Vector2(576, 324)
 z_index = 1
 position = Vector2(576, 324)
 script = ExtResource("3_token")
+
+[node name="Portrait" type="Sprite2D" parent="Board/CharacterToken"]
+material = SubResource("ShaderMaterial_circle")
+scale = Vector2(0.454545, 0.454545)
+texture = SubResource("AtlasTexture_character")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource("9_hud")
+
+[node name="CharacterPanel" type="PanelContainer" parent="HUD"]
+anchors_preset = 3
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -206.0
+offset_right = 296.0
+offset_bottom = -16.0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBox_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/CharacterPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="Content" type="VBoxContainer" parent="HUD/CharacterPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CharacterRow" type="HBoxContainer" parent="HUD/CharacterPanel/MarginContainer/Content"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Portrait" type="TextureRect" parent="HUD/CharacterPanel/MarginContainer/Content/CharacterRow"]
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+material = SubResource("ShaderMaterial_circle")
+texture = SubResource("AtlasTexture_character")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CharacterDetails" type="VBoxContainer" parent="HUD/CharacterPanel/MarginContainer/Content/CharacterRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="CharacterLabel" type="Label" parent="HUD/CharacterPanel/MarginContainer/Content/CharacterRow/CharacterDetails"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.87, 0.73, 1)
+text = "Character"
+
+[node name="HealthLabel" type="Label" parent="HUD/CharacterPanel/MarginContainer/Content/CharacterRow/CharacterDetails"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.87, 0.73, 1)
+text = "Health"
+
+[node name="HealthBar" type="ProgressBar" parent="HUD/CharacterPanel/MarginContainer/Content/CharacterRow/CharacterDetails"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBox_health_background")
+theme_override_styles/fill = SubResource("StyleBox_health_fill")
+value = 100.0
+show_percentage = false
+
+[node name="ItemsLabel" type="Label" parent="HUD/CharacterPanel/MarginContainer/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.87, 0.73, 1)
+text = "Items"
+
+[node name="InventoryScroll" type="ScrollContainer" parent="HUD/CharacterPanel/MarginContainer/Content"]
+custom_minimum_size = Vector2(0, 84)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="InventoryList" type="VBoxContainer" parent="HUD/CharacterPanel/MarginContainer/Content/InventoryScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6

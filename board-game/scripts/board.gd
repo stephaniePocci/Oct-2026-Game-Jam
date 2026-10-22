@@ -6,6 +6,7 @@ const DRAG_THRESHOLD := 8.0
 const ZOOM_STEP := 1.1
 const MIN_ZOOM := 0.5
 const MAX_ZOOM := 3.0
+const MAX_INVENTORY_ITEMS := 4
 const DIRECTIONS := {
 	"north": Vector2i.UP,
 	"east": Vector2i.RIGHT,
@@ -112,12 +113,12 @@ func _register_room(room, cell: Vector2i) -> void:
 	room.item_clicked.connect(_on_item_clicked)
 
 func _on_item_clicked(room, index: int) -> void:
-	if room != current_room or (move_tween and move_tween.is_running()):
+	if room != current_room or (move_tween and move_tween.is_running()) or inventory.size() >= MAX_INVENTORY_ITEMS:
 		return
 	var item: ItemDefinition = room.take_item(index)
 	if item != null:
 		inventory.append(item)
-		hud.add_item(item)
+		hud.update_inventory(inventory)
 
 func _validate_item_chances() -> bool:
 	var total := 0

@@ -1,7 +1,7 @@
 extends Node2D
 
 const ROOM_SIZE := Vector2(256, 192)
-const ITEM_SIZE := Vector2(24, 32)
+const ITEM_SIZE := Vector2(30, 36)
 const ITEM_POSITIONS := [
 	Vector2(80, -48),
 	Vector2(80, 48),
@@ -90,10 +90,14 @@ func _draw() -> void:
 			draw_circle(SIDE_POSITIONS[direction], CIRCLE_RADIUS, Color(0.9, 0.7, 0.3))
 	for index in items.size():
 		var card_rect := Rect2(ITEM_POSITIONS[index] - ITEM_SIZE / 2, ITEM_SIZE)
-		draw_rect(card_rect, Color(0.2, 0.78, 0.32), true)
-		if items[index].item_art != null:
-			draw_texture_rect(items[index].item_art, card_rect.grow(-3.0), false)
-		draw_rect(card_rect, Color(0.08, 0.35, 0.12), false, 2.0)
+		draw_rect(card_rect, Color(0.86, 0.72, 0.49), true)
+		var artwork: Texture2D = items[index].map_art if items[index].map_art != null else items[index].item_art
+		if artwork != null:
+			var inner_rect := card_rect.grow(-3.0)
+			var artwork_size := Vector2(artwork.get_size())
+			var fitted_size := artwork_size * minf(inner_rect.size.x / artwork_size.x, inner_rect.size.y / artwork_size.y)
+			draw_texture_rect(artwork, Rect2(inner_rect.get_center() - fitted_size / 2.0, fitted_size), false)
+		draw_rect(card_rect, Color(0.21, 0.15, 0.09), false, 2.0)
 
 func handle_click(screen_position: Vector2) -> void:
 	var mouse_position := get_global_transform_with_canvas().affine_inverse() * screen_position

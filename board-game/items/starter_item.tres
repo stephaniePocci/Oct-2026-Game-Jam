@@ -1,14 +1,16 @@
 [gd_resource type="Resource" script_class="ItemDefinition" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/item_definition.gd" id="1_item"]
-[ext_resource type="Texture2D" path="res://assets/references/Haunted Gothic Game Mood Board.png" id="2_mood"]
+[ext_resource type="Texture2D" path="res://assets/items/old brass key.png" id="2_card"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_key"]
-atlas = ExtResource("2_mood")
-region = Rect2(260, 667, 110, 150)
+[sub_resource type="AtlasTexture" id="AtlasTexture_map"]
+atlas = ExtResource("2_card")
+region = Rect2(187, 235, 650, 812)
 
 [resource]
 script = ExtResource("1_item")
-item_name = "Brass Key"
-spawn_chance = 50
-item_art = SubResource("AtlasTexture_key")
+item_name = "Old Brass Key"
+description = "An old brass key, worn smooth by many hands. Somewhere in the house, a lock remembers it."
+spawn_chance = 25
+item_art = ExtResource("2_card")
+map_art = SubResource("AtlasTexture_map")

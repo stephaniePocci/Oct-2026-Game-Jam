@@ -1,0 +1,112 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_menu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_help"]
+bg_color = Color(0.1, 0.11, 0.1, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.68, 0.55, 0.33, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.075, 0.08, 0.075, 1)
+
+[node name="MenuView" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MenuButtons" type="VBoxContainer" parent="MenuView"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Title" type="Label" parent="MenuView/MenuButtons"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.87, 0.73, 1)
+theme_override_font_sizes/font_size = 42
+text = "Board Game"
+horizontal_alignment = 1
+
+[node name="PlayButton" type="Button" parent="MenuView/MenuButtons"]
+custom_minimum_size = Vector2(240, 44)
+layout_mode = 2
+text = "Play"
+
+[node name="HowToPlayButton" type="Button" parent="MenuView/MenuButtons"]
+custom_minimum_size = Vector2(240, 44)
+layout_mode = 2
+text = "How to Play"
+
+[node name="QuitButton" type="Button" parent="MenuView/MenuButtons"]
+custom_minimum_size = Vector2(240, 44)
+layout_mode = 2
+text = "Quit"
+
+[node name="HelpView" type="CenterContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HelpPanel" type="PanelContainer" parent="HelpView"]
+custom_minimum_size = Vector2(680, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBox_help")
+
+[node name="MarginContainer" type="MarginContainer" parent="HelpView/HelpPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="HelpContent" type="VBoxContainer" parent="HelpView/HelpPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Heading" type="Label" parent="HelpView/HelpPanel/MarginContainer/HelpContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.87, 0.73, 1)
+theme_override_font_sizes/font_size = 28
+text = "How to Play"
+horizontal_alignment = 1
+
+[node name="Instructions" type="Label" parent="HelpView/HelpPanel/MarginContainer/HelpContent"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+text = "Click a gold entrance in your current room to reveal another room.\nClick your character to select it, then click a connected room to move.\nDrag the board to pan; use the mouse wheel to zoom.\nEnter a room and click an item to collect it. Click an inventory card to inspect it, then choose Use.\nLaudanum heals 25% health when you are below full health. A pit can be hidden in any revealed room; the next token to enter that room can no longer move."
+autowrap_mode = 2
+
+[node name="BackButton" type="Button" parent="HelpView/HelpPanel/MarginContainer/HelpContent"]
+custom_minimum_size = Vector2(160, 40)
+layout_mode = 2
+text = "Back"

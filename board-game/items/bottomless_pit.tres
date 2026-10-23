@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ItemDefinition" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/item_definition.gd" id="1_item"]
-[ext_resource type="Texture2D" path="res://assets/items/bottomless pit.png" id="2_card"]
+[ext_resource type="Texture2D" path="res://assets/items/bottomless-pit-trap.png" id="2_card"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_map"]
 atlas = ExtResource("2_card")
@@ -10,7 +10,7 @@ region = Rect2(226, 235, 632, 790)
 [resource]
 script = ExtResource("1_item")
 item_name = "Bottomless Pit"
-description = "Beneath the old carpet yawns a lightless pit. One careless step, and the house keeps you."
+description = "Place an invisible pit in any revealed room. The next character to enter cannot move again."
 spawn_chance = 25
 item_art = ExtResource("2_card")
 map_art = SubResource("AtlasTexture_map")

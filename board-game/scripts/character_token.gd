@@ -2,6 +2,8 @@ extends Node2D
 
 const TOKEN_RADIUS := 20.0
 var selected := false
+var health := 100
+var trapped := false
 
 
 func _draw() -> void:

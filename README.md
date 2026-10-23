@@ -12,8 +12,11 @@ Use Godot **4.7.2**, the regular (non-.NET) build. The project uses GDScript
 and the Compatibility renderer.
 
 1. Open Godot and import `board-game/project.godot`.
-2. Open `board-game/scenes/game.tscn`.
-3. Press **F6** to run the current scene or **F5** to run the project.
+2. Press **F5** to open the main menu, or open `board-game/scenes/game.tscn`
+   and press **F6** to run the game scene directly.
+
+With Godot on your PATH, run the item-use smoke check with
+`godot --headless --path board-game --script res://tests/item_use_smoke.gd`.
 
 ## Try the prototype
 
@@ -64,15 +67,24 @@ bottom-left inventory. Collecting does not deselect the character token.
 
 To add an item type, create a new `ItemDefinition` resource in Godot's FileSystem
 dock, set its name, spawn chance, and optional item art, then add it to the Board
-node's `Item Definitions` array in `game.tscn`. The included Brass Key has a 50%
-chance. Chances across the array must total at most 100%; the unused percentage
+node's `Item Definitions` array in `game.tscn`. The four included item types
+each have a 25% chance. Chances across the array must total at most 100%; the unused percentage
 is the chance that a room starts empty. Items remain in inventory for the
-current play session; dropping and saving are not available yet.
+current play session until used; saving is not available yet.
+
+Click an inventory card to inspect it, then click **Use** beneath the card.
+Using the key or rifle removes it from inventory; their effects are not designed
+yet. Laudanum heals 25% health, capped at 100%, and cannot be used at full
+health. Using a Bottomless Pit lets you choose any revealed room, including the
+current room. The yellow border shows the room under your cursor; click to place
+the invisible pit, or press Escape/right-click to cancel without using it. The
+next token to enter that room, including the same token returning later, becomes
+unable to move. A pit placed in the occupied room waits for a later entry.
 
 The character portrait and Brass Key art are cropped at display time from the
 unchanged mood board in `board-game/assets/references`. The circular mask only
 softens the portrait's edge; the reference art itself is unchanged. The Health
-bar in the bottom-left Character view is visual only for now.
+bar starts at 100%; no damage mechanic exists yet.
 
 ## Project structure
 
@@ -80,7 +92,8 @@ bar in the bottom-left Character view is visual only for now.
 board-game/
 ├── rooms/               # Room type resources and spawn chances
 ├── scenes/
-│   ├── game.tscn       # Main scene with Board, Room, and CharacterToken
+│   ├── main_menu.tscn  # Startup menu and How to Play
+│   ├── game.tscn       # Board, Room, CharacterToken, and HUD
 │   └── Room.tscn       # Reusable room scene
 ├── scripts/
 │   ├── board.gd        # Places rooms and moves the token

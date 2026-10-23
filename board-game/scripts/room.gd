@@ -28,6 +28,7 @@ signal item_clicked(room, index: int)
 var definition: RoomDefinition
 var connected_rooms: Dictionary = {}
 var items: Array[ItemDefinition] = []
+var pit_target_hovered := false
 
 func set_definition(room_definition: RoomDefinition) -> void:
 	definition = room_definition
@@ -98,6 +99,8 @@ func _draw() -> void:
 			var fitted_size := artwork_size * minf(inner_rect.size.x / artwork_size.x, inner_rect.size.y / artwork_size.y)
 			draw_texture_rect(artwork, Rect2(inner_rect.get_center() - fitted_size / 2.0, fitted_size), false)
 		draw_rect(card_rect, Color(0.21, 0.15, 0.09), false, 2.0)
+	if pit_target_hovered:
+		draw_rect(room_rect.grow(-3.0), Color.YELLOW, false, 6.0)
 
 func handle_click(screen_position: Vector2) -> void:
 	var mouse_position := get_global_transform_with_canvas().affine_inverse() * screen_position

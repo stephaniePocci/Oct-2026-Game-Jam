@@ -7,6 +7,8 @@ const ZOOM_STEP := 1.1
 const MIN_ZOOM := 0.5
 const MAX_ZOOM := 3.0
 const MAX_INVENTORY_ITEMS := 4
+const LAUDANUM = preload("res://items/laudanum.tres")
+const BOTTOMLESS_PIT = preload("res://items/bottomless_pit.tres")
 const DIRECTIONS := {
 	"north": Vector2i.UP,
 	"east": Vector2i.RIGHT,
@@ -38,6 +40,9 @@ var board_origin: Vector2
 var mouse_down := false
 var dragging := false
 var press_position := Vector2.ZERO
+var pending_pit_index := -1
+var hovered_pit_room
+var pit_rooms: Dictionary = {}
 
 func _ready() -> void:
 	var starting_room = get_node("Room")
@@ -51,8 +56,31 @@ func _ready() -> void:
 	starting_room.set_entrances(_roll_entrances(Vector2i.ZERO, ""))
 	_register_room(starting_room, Vector2i.ZERO)
 	_spawn_item(starting_room)
+	call_deferred("_setup_hud")
+
+func _setup_hud() -> void:
+	hud.use_requested.connect(_on_item_use_requested)
+	hud.update_health(token.health)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if pending_pit_index >= 0:
+		if event.is_action_pressed("ui_cancel"):
+			_cancel_pit_placement()
+			get_viewport().set_input_as_handled()
+			return
+		if event is InputEventMouseMotion:
+			_set_hovered_pit_room(_room_at_screen_position(event.position))
+			get_viewport().set_input_as_handled()
+			return
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+			_cancel_pit_placement()
+			get_viewport().set_input_as_handled()
+			return
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+			if not event.pressed:
+				_place_pit(_room_at_screen_position(event.position))
+			get_viewport().set_input_as_handled()
+			return
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			if event.pressed:
@@ -96,14 +124,18 @@ func _zoom_at(screen_position: Vector2, zoom_in: bool) -> void:
 
 func _click_at(screen_position: Vector2) -> void:
 	if token.contains_screen_point(screen_position):
-		token.toggle_selected()
+		if not token.trapped:
+			token.toggle_selected()
 		return
+	var room = _room_at_screen_position(screen_position)
+	if room != null:
+		room.handle_click(screen_position)
+
+func _room_at_screen_position(screen_position: Vector2):
 	var board_position := get_global_transform_with_canvas().affine_inverse() * screen_position
 	var offset := board_position - board_origin + ROOM_SIZE / 2.0
 	var cell := Vector2i(floori(offset.x / ROOM_SIZE.x), floori(offset.y / ROOM_SIZE.y))
-	var room = rooms_by_cell.get(cell)
-	if room != null:
-		room.handle_click(screen_position)
+	return rooms_by_cell.get(cell)
 
 func _register_room(room, cell: Vector2i) -> void:
 	rooms_by_cell[cell] = room
@@ -119,6 +151,56 @@ func _on_item_clicked(room, index: int) -> void:
 	if item != null:
 		inventory.append(item)
 		hud.update_inventory(inventory)
+
+func _on_item_use_requested(index: int) -> void:
+	if index < 0 or index >= inventory.size():
+		return
+	var item: ItemDefinition = inventory[index]
+	if item == LAUDANUM:
+		if token.health >= 100:
+			return
+		token.health = mini(token.health + 25, 100)
+		hud.update_health(token.health)
+	elif item == BOTTOMLESS_PIT:
+		pending_pit_index = index
+		hud.close_inspection()
+		hud.set_pit_targeting(true)
+		_set_hovered_pit_room(_room_at_screen_position(get_viewport().get_mouse_position()))
+		return
+	inventory.remove_at(index)
+	hud.close_inspection()
+	hud.update_inventory(inventory)
+
+func _set_hovered_pit_room(room) -> void:
+	if room != null and pit_rooms.has(room):
+		room = null
+	if hovered_pit_room == room:
+		return
+	if hovered_pit_room != null:
+		hovered_pit_room.pit_target_hovered = false
+		hovered_pit_room.queue_redraw()
+	hovered_pit_room = room
+	if hovered_pit_room != null:
+		hovered_pit_room.pit_target_hovered = true
+		hovered_pit_room.queue_redraw()
+
+func _place_pit(room) -> void:
+	if room == null or pit_rooms.has(room):
+		return
+	if pending_pit_index >= inventory.size() or inventory[pending_pit_index] != BOTTOMLESS_PIT:
+		_cancel_pit_placement()
+		return
+	pit_rooms[room] = true
+	inventory.remove_at(pending_pit_index)
+	hud.update_inventory(inventory)
+	_cancel_pit_placement()
+
+func _cancel_pit_placement() -> void:
+	pending_pit_index = -1
+	_set_hovered_pit_room(null)
+	hud.set_pit_targeting(false)
+	if token.trapped:
+		hud.show_status("The pit trapped your character. Movement is no longer possible.")
 
 func _validate_item_chances() -> bool:
 	var total := 0
@@ -213,7 +295,7 @@ func spawn_room(cell: Vector2i, required_direction: String) -> void:
 	_spawn_item(new_room)
 
 func _on_room_clicked(room) -> void:
-	if not token.selected or room == current_room:
+	if not token.selected or token.trapped or room == current_room:
 		return
 	if move_tween and move_tween.is_running():
 		return
@@ -226,6 +308,12 @@ func _on_room_clicked(room) -> void:
 
 func _on_move_finished(room) -> void:
 	current_room = room
+	if pit_rooms.has(room):
+		pit_rooms.erase(room)
+		token.trapped = true
+		token.selected = false
+		token.queue_redraw()
+		hud.show_status("The pit trapped your character. Movement is no longer possible.")
 
 func _on_room_side_clicked(room, direction: String) -> void:
 	if room != current_room or (move_tween and move_tween.is_running()):

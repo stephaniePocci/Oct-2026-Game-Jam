@@ -200,7 +200,7 @@ func _cancel_pit_placement() -> void:
 	_set_hovered_pit_room(null)
 	hud.set_pit_targeting(false)
 	if token.trapped:
-		hud.show_status("The pit trapped your character. Movement is no longer possible.")
+		hud.show_status("The floor gives way beneath you. The darkness below holds you fast; you can no longer move.")
 
 func _validate_item_chances() -> bool:
 	var total := 0
@@ -313,7 +313,7 @@ func _on_move_finished(room) -> void:
 		token.trapped = true
 		token.selected = false
 		token.queue_redraw()
-		hud.show_status("The pit trapped your character. Movement is no longer possible.")
+		hud.show_status("The floor gives way beneath you. The darkness below holds you fast; you can no longer move.")
 
 func _on_room_side_clicked(room, direction: String) -> void:
 	if room != current_room or (move_tween and move_tween.is_running()):
